@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="description" content="Calculatrice de boissons pour votre mariage. Estimez vos besoins en boissons alcoolisées et non alcoolisées en fonction du nombre d'invités et de leurs préférences.">
+    <meta name="keywords" content="mariage, calculatrice de boissons, estimation de boissons, mariage parfait, planification de mariage, boissons alcoolisées, boissons non alcoolisées">
+    <title>Wedding Planner - Calculatrice de boissons</title>
+   
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>💍 Wedding Planner</h1>
+            <p>Organisez votre mariage parfait avec nos outils personnalisés</p>
+            <a href="#calculator" class="hero-cta">Commencer maintenant</a>
+        </div>
+
+        <!-- Calculatrice de boissons -->
+        <div class="section calculator" id="calculator">
+            <h2>🥂 Calculatrice de Boissons</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: #7f8c8d;">
+                Calculez précisément vos besoins en boissons pour éviter les surplus ou les pénuries
+            </p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="adults">Nombre d'adultes</label>
+                    <input type="number" id="adults" min="1" value="50" required>
+                </div>
+                <div class="form-group">
+                    <label for="children">Nombre d'enfants</label>
+                    <input type="number" id="children" min="0" value="10">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="alcoholLevel">Niveau de consommation d'alcool</label>
+                <select id="alcoholLevel" required>
+                    <option value="none">Sans alcool</option>
+                    <option value="low">Faible</option>
+                    <option value="normal" selected>Normale</option>
+                    <option value="high">Élevée</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="mealTypeGroup">
+                <label for="mealType">Type de repas (pour les vins)</label>
+                <select id="mealType">
+                    <option value="mixed" selected>Mixte</option>
+                    <option value="red-meat">Viande rouge</option>
+                    <option value="fish-poultry">Poisson/Volaille</option>
+                    <option value="vegetarian">Végétarien</option>
+                </select>
+            </div>
+
+            <div class="drinks-selection">
+                <label>Types de boissons à prévoir</label>
+                <div class="drinks-grid">
+                    <div class="drink-option tooltip" data-drink="soft">
+                        <input type="checkbox" id="soft" checked>
+                        <label for="soft">Boissons sucrées</label>
+                        <span class="tooltiptext">Sodas, jus de fruits, limonades. Idéal pour les enfants et non-buveurs.</span>
+                    </div>
+                    
+                    <div class="drink-option tooltip" data-drink="wine">
+                        <input type="checkbox" id="wine" checked>
+                        <label for="wine">Vins (rouge/blanc/rosé)</label>
+                        <span class="tooltiptext">Vin rouge pour viandes, blanc pour poissons, rosé pour l'apéritif.</span>
+                    </div>
+                    
+                    <div class="drink-option tooltip" data-drink="beer">
+                        <input type="checkbox" id="beer">
+                        <label for="beer">Bières</label>
+                        <span class="tooltiptext">Bières en canettes ou fût. Rafraîchissant pour l'été.</span>
+                    </div>
+                    
+                    <div class="drink-option tooltip" data-drink="champagne">
+                        <input type="checkbox" id="champagne" checked>
+                        <label for="champagne">Champagne</label>
+                        <span class="tooltiptext">Pour le vin d'honneur et les toasts. 2 coupes par personne max.</span>
+                    </div>
+                    
+                    <div class="drink-option tooltip" data-drink="water">
+                        <input type="checkbox" id="water" checked>
+                        <label for="water">Eau (plate/pétillante)</label>
+                        <span class="tooltiptext">Indispensable ! 70% plate, 30% pétillante.</span>
+                    </div>
+                    
+                    <div class="drink-option tooltip" data-drink="cocktails">
+                        <input type="checkbox" id="cocktails">
+                        <label for="cocktails">Cocktails</label>
+                        <span class="tooltiptext">Avec alcool fort. Pour l'apéritif ou la soirée dansante.</span>
+                    </div>
+                    
+                    <div class="drink-option tooltip" data-drink="spirits">
+                        <input type="checkbox" id="spirits">
+                        <label for="spirits">Alcools forts</label>
+                        <span class="tooltiptext">Whisky, vodka, rhum, tequila. Pour les cocktails ou digestifs.</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateDrinks()">
+                🧮 Calculer mes besoins
+            </button>
+
+            <div class="results" id="results">
+                <h3>📋 Vos besoins en boissons (marge 10% incluse)</h3>
+                <div id="resultsList"></div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="acceptResults()">
+                        ✅ Ces estimations me conviennent
+                    </button>
+                    <button class="btn btn-secondary" onclick="customizeResults()">
+                        🎯 Je veux personnaliser
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline de mariage -->
+        <div class="section">
+            <h2>📅 Timeline de Préparation</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: #7f8c8d;">
+                Ne rien oublier avec notre planning étape par étape
+            </p>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">12 mois avant</div>
+                    <div class="timeline-content">
+                        <h4>Fixer la date et le budget</h4>
+                        <p>Choisir la date, établir le budget global, réserver la salle et l'officiant</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-date">8-10 mois avant</div>
+                    <div class="timeline-content">
+                        <h4>Prestataires principaux</h4>
+                        <p>Photographe, traiteur, fleuriste, musiciens - les plus demandés en premier</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-date">6 mois avant</div>
+                    <div class="timeline-content">
+                        <h4>Invitations et détails</h4>
+                        <p>Envoyer les invitations, choisir le menu, essayages de robes</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-date">2 mois avant</div>
+                    <div class="timeline-content">
+                        <h4>Finitions et confirmations</h4>
+                        <p>Confirmer tous les prestataires, plan de table, derniers préparatifs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checklist rapide -->
+        <div class="section">
+            <h2>✅ Checklist Essentielle</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: #7f8c8d;">
+                Les tâches incontournables pour un mariage réussi
+            </p>
+            
+            <div class="checklist">
+                <div class="checklist-item">
+                    <h4>Budget et financement</h4>
+                    <p>Définir le budget total et répartir par poste (salle: 40%, traiteur: 30%, etc.)</p>
+                </div>
+                
+                <div class="checklist-item">
+                    <h4>Date et lieu</h4>
+                    <p>Réserver la mairie/église et la salle de réception dès que possible</p>
+                </div>
+                
+                <div class="checklist-item">
+                    <h4>Liste des invités</h4>
+                    <p>Établir la liste définitive pour dimensionner tous les autres éléments</p>
+                </div>
+                
+                <div class="checklist-item">
+                    <h4>Prestataires clés</h4>
+                    <p>Photographe, traiteur, fleuriste - réserver 8-12 mois à l'avance</p>
+                </div>
+                
+                <div class="checklist-item">
+                    <h4>Tenues des mariés</h4>
+                    <p>Robe, costume, accessoires - prévoir plusieurs essayages</p>
+                </div>
+                
+                <div class="checklist-item">
+                    <h4>Démarches administratives</h4>
+                    <p>Dossier de mariage, publications des bans, changements d'état civil</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Témoignages -->
+        <div class="section">
+            <h2>💬 Ils nous font confiance</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: #7f8c8d;">
+                L'avis de couples qui ont organisé leur mariage avec nos outils
+            </p>
+            
+            <div class="testimonials">
+                <div class="testimonial">
+                    <p>La calculatrice de boissons nous a fait économiser plus de 500€ ! Nous avions exactement ce qu'il fallait.</p>
+                    <div class="testimonial-author">Sarah & Thomas - Mariage 120 invités</div>
+                </div>
+                
+                <div class="testimonial">
+                    <p>Grâce à la timeline, nous n'avons rien oublié. Tout était parfaitement organisé le jour J.</p>
+                    <div class="testimonial-author">Marie & Julien - Mariage 80 invités</div>
+                </div>
+                
+                <div class="testimonial">
+                    <p>Les outils sont vraiment pratiques et faciles à utiliser. Je recommande à tous les futurs mariés !</p>
+                    <div class="testimonial-author">Emma & Maxime - Mariage 150 invités</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aperçu des outils -->
+        <div class="section">
+            <h2>🛠️ Tous nos outils</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: #7f8c8d;">
+                Une suite complète pour organiser votre mariage de A à Z
+            </p>
+            
+            <div class="tools-preview">
+                <div class="tool-card">
+                    <div class="tool-icon">📊</div>
+                    <h4>Gestionnaire de budget</h4>
+                    <p>Suivez vos dépenses en temps réel et respectez votre budget</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">👥</div>
+                    <h4>Liste des invités</h4>
+                    <p>Gérez facilement vos invitations et les réponses</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">🍽️</div>
+                    <h4>Plan de table</h4>
+                    <p>Créez le plan de table idéal en quelques clics</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">📋</div>
+                    <h4>To-do list personnalisée</h4>
+                    <p>Ne ratez aucune étape avec nos listes intelligentes</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">🎥</div>
+                    <h4>Vidéos DIY</h4>
+                    <p>Tutoriels pour créer votre décoration vous-même</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">📱</div>
+                    <h4>App mobile</h4>
+                    <p>Bientôt disponible pour gérer votre mariage partout</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
