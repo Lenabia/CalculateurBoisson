@@ -1,7 +1,11 @@
+// ============================================================================
+// CONFIGURATION DES RATIOS ET PARAMÈTRES DE CALCUL
+// ============================================================================
+
 // Configuration des ratios standards pour chaque type de boisson
 const drinkRatios = {
   wine: {
-    // Ratios pour le vin en verres par adulte
+    // Ratios pour le vin en verres par adulte selon le niveau de consommation
     normal: { red: 1.5, white: 1.5, rose: 0.5 }, // Consommation normale
     low: { red: 1, white: 1, rose: 0.3 }, // Consommation faible
     high: { red: 2, white: 2, rose: 0.8 }, // Consommation élevée
@@ -38,6 +42,10 @@ const mealTypeRatios = {
   vegetarian: { red: 0, white: 0.6, rose: 0.4 },
 };
 
+// ============================================================================
+// GESTION DES ÉVÉNEMENTS ET INTERACTIONS
+// ============================================================================
+
 // Gestion des interactions avec les checkboxes des boissons
 document.querySelectorAll(".drink-option").forEach((option) => {
   // Ajouter un écouteur d'événement sur chaque option de boisson
@@ -54,6 +62,8 @@ document.querySelectorAll(".drink-option").forEach((option) => {
       "selected",
       this.querySelector('input[type="checkbox"]').checked
     );
+    // Valider la sélection des boissons après chaque changement
+    validateDrinksSelection();
   });
 });
 
@@ -65,10 +75,16 @@ document.getElementById("alcoholLevel").addEventListener("change", function () {
   if (this.value === "none") {
     // Masquer les options de type de repas
     mealGroup.classList.add("hidden");
+    // Masquer toutes les boissons alcoolisées
+    hideAlcoholicDrinks();
   } else {
     // Afficher les options de type de repas
     mealGroup.classList.remove("hidden");
+    // Afficher toutes les boissons alcoolisées
+    showAlcoholicDrinks();
   }
+  // Valider la sélection des boissons après le changement
+  validateDrinksSelection();
 });
 
 // Gestion du scroll fluide pour le bouton CTA
@@ -79,15 +95,101 @@ document.querySelector(".hero-cta").addEventListener("click", function (e) {
   document.querySelector("#calculator").scrollIntoView({ behavior: "smooth" });
 });
 
+// Validation en temps réel du nombre d'adultes
+document.getElementById("adults").addEventListener("input", function() {
+  // Valider le nombre d'adultes à chaque saisie
+  validateAdults();
+});
+
+// ============================================================================
+// FONCTIONS DE VALIDATION
+// ============================================================================
+
+// Fonction de validation du nombre d'adultes
+function validateAdults() {
+  // Récupérer la valeur du nombre d'adultes
+  const adults = parseInt(document.getElementById("adults").value) || 0;
+  // Récupérer l'élément d'erreur
+  const errorElement = document.getElementById("adultsError");
+  
+  // Vérifier si le nombre d'adultes est valide
+  if (adults <= 0) {
+    // Afficher le message d'erreur
+    errorElement.textContent = "Veuillez renseigner le nombre d'adultes";
+    errorElement.style.display = "block";
+    return false;
+  } else {
+    // Masquer le message d'erreur
+    errorElement.style.display = "none";
+    return true;
+  }
+}
+
+// Fonction de validation de la sélection des boissons
+function validateDrinksSelection() {
+  // Récupérer toutes les checkboxes cochées
+  const checkedDrinks = document.querySelectorAll('.drink-option input[type="checkbox"]:checked');
+  // Récupérer l'élément d'erreur
+  const errorElement = document.getElementById("drinksError");
+  
+  // Vérifier si au moins une boisson est sélectionnée
+  if (checkedDrinks.length === 0) {
+    // Afficher le message d'erreur
+    errorElement.textContent = "Veuillez sélectionner au moins une boisson";
+    errorElement.style.display = "block";
+    return false;
+  } else {
+    // Masquer le message d'erreur
+    errorElement.style.display = "none";
+    return true;
+  }
+}
+
+// ============================================================================
+// FONCTIONS DE GESTION DE L'AFFICHAGE DES BOISSONS
+// ============================================================================
+
+// Fonction pour masquer les boissons alcoolisées
+function hideAlcoholicDrinks() {
+  // Sélectionner toutes les boissons alcoolisées
+  const alcoholicDrinks = document.querySelectorAll(".alcoholic-drink");
+  // Masquer chaque boisson alcoolisée
+  alcoholicDrinks.forEach((drink) => {
+    drink.style.display = "none";
+    // Décocher la checkbox associée
+    const checkbox = drink.querySelector('input[type="checkbox"]');
+    if (checkbox) {
+      checkbox.checked = false;
+      drink.classList.remove("selected");
+    }
+  });
+}
+
+// Fonction pour afficher les boissons alcoolisées
+function showAlcoholicDrinks() {
+  // Sélectionner toutes les boissons alcoolisées
+  const alcoholicDrinks = document.querySelectorAll(".alcoholic-drink");
+  // Afficher chaque boisson alcoolisée
+  alcoholicDrinks.forEach((drink) => {
+    drink.style.display = "flex";
+  });
+}
+
+// ============================================================================
+// FONCTION PRINCIPALE DE CALCUL DES BOISSONS
+// ============================================================================
+
 // Fonction principale de calcul des boissons
 function calculateDrinks() {
-  // Récupérer le nombre d'adultes depuis le formulaire
+  // Valider les entrées avant de calculer
+  if (!validateAdults() || !validateDrinksSelection()) {
+    return; // Arrêter le calcul si la validation échoue
+  }
+
+  // Récupérer les valeurs du formulaire
   const adults = parseInt(document.getElementById("adults").value) || 0;
-  // Récupérer le nombre d'enfants depuis le formulaire
   const children = parseInt(document.getElementById("children").value) || 0;
-  // Récupérer le niveau d'alcool sélectionné
   const alcoholLevel = document.getElementById("alcoholLevel").value;
-  // Récupérer le type de repas sélectionné
   const mealType = document.getElementById("mealType").value;
 
   // Créer un objet pour stocker les boissons sélectionnées
@@ -100,40 +202,32 @@ function calculateDrinks() {
       selectedDrinks[cb.id] = true;
     });
 
-  // Vérifier qu'il y a au moins un adulte
-  if (adults === 0) {
-    alert("Veuillez indiquer le nombre d'adultes");
-    return;
-  }
-
-  // Créer un objet pour stocker les résultats
-  const results = {};
+  // Créer un objet pour stocker les résultats (quantité de base et avec marge)
+  const results = {
+    base: {}, // Quantités de base
+    withMargin: {} // Quantités avec marge de 10%
+  };
+  
   // Calculer le nombre total d'invités
   const totalGuests = adults + children;
 
   // Traitement selon le niveau d'alcool choisi
   if (alcoholLevel === "none") {
     // Cas sans alcool - Mocktails uniquement
-    if (selectedDrinks.cocktails) {
+    if (selectedDrinks["cocktails-non-alcoholic"]) {
       // Calculer le nombre total de verres (1.5 par personne)
       const totalGlasses = totalGuests * 1.5;
       // Convertir en litres (0.2L par verre)
       const totalLiters = Math.ceil(totalGlasses * 0.2);
-      // Stocker le résultat pour les mocktails
-      results["Mocktails"] = `${totalLiters} litres (${Math.ceil(
-        totalGlasses
-      )} verres)`;
+      // Stocker les résultats pour les mocktails
+      results.base["Cocktails sans alcool"] = `${totalLiters} litres (${Math.ceil(totalGlasses)} verres)`;
+      results.withMargin["Cocktails sans alcool"] = `${Math.ceil(totalLiters * 1.1)} litres (${Math.ceil(totalGlasses * 1.1)} verres)`;
     }
   } else {
     // Cas avec alcool - traitement de toutes les boissons alcoolisées
     
     // Déterminer le niveau de consommation (low, normal, high)
-    const level =
-      alcoholLevel === "low"
-        ? "low"
-        : alcoholLevel === "high"
-        ? "high"
-        : "normal";
+    const level = alcoholLevel === "low" ? "low" : alcoholLevel === "high" ? "high" : "normal";
 
     // Calcul pour les vins
     if (selectedDrinks.wine) {
@@ -145,29 +239,27 @@ function calculateDrinks() {
       // Calculer le nombre de verres de vin rouge
       const redGlasses = Math.ceil(adults * wineRatios.red * mealRatio.red);
       // Calculer le nombre de verres de vin blanc
-      const whiteGlasses = Math.ceil(
-        adults * wineRatios.white * mealRatio.white
-      );
+      const whiteGlasses = Math.ceil(adults * wineRatios.white * mealRatio.white);
       // Calculer le nombre de verres de vin rosé
       const roseGlasses = Math.ceil(adults * wineRatios.rose * mealRatio.rose);
 
       // Si il faut du vin rouge, calculer le nombre de bouteilles (5 verres par bouteille)
       if (redGlasses > 0) {
-        results["Vin rouge"] = `${Math.ceil(
-          redGlasses / 5
-        )} bouteilles (${redGlasses} verres)`;
+        const redBottles = Math.ceil(redGlasses / 5);
+        results.base["Vin rouge"] = `${redBottles} bouteilles (${redGlasses} verres)`;
+        results.withMargin["Vin rouge"] = `${Math.ceil(redBottles * 1.1)} bouteilles (${Math.ceil(redGlasses * 1.1)} verres)`;
       }
       // Si il faut du vin blanc, calculer le nombre de bouteilles
       if (whiteGlasses > 0) {
-        results["Vin blanc"] = `${Math.ceil(
-          whiteGlasses / 5
-        )} bouteilles (${whiteGlasses} verres)`;
+        const whiteBottles = Math.ceil(whiteGlasses / 5);
+        results.base["Vin blanc"] = `${whiteBottles} bouteilles (${whiteGlasses} verres)`;
+        results.withMargin["Vin blanc"] = `${Math.ceil(whiteBottles * 1.1)} bouteilles (${Math.ceil(whiteGlasses * 1.1)} verres)`;
       }
       // Si il faut du vin rosé, calculer le nombre de bouteilles
       if (roseGlasses > 0) {
-        results["Vin rosé"] = `${Math.ceil(
-          roseGlasses / 5
-        )} bouteilles (${roseGlasses} verres)`;
+        const roseBottles = Math.ceil(roseGlasses / 5);
+        results.base["Vin rosé"] = `${roseBottles} bouteilles (${roseGlasses} verres)`;
+        results.withMargin["Vin rosé"] = `${Math.ceil(roseBottles * 1.1)} bouteilles (${Math.ceil(roseGlasses * 1.1)} verres)`;
       }
     }
 
@@ -177,10 +269,9 @@ function calculateDrinks() {
       const champagneGlasses = totalGuests * drinkRatios.champagne[level];
       // Calculer le nombre de bouteilles (6 coupes par bouteille)
       const champagneBottles = Math.ceil(champagneGlasses / 6);
-      // Stocker le résultat pour le champagne
-      results["Champagne"] = `${champagneBottles} bouteilles (${Math.ceil(
-        champagneGlasses
-      )} coupes)`;
+      // Stocker les résultats pour le champagne
+      results.base["Champagne"] = `${champagneBottles} bouteilles (${Math.ceil(champagneGlasses)} coupes)`;
+      results.withMargin["Champagne"] = `${Math.ceil(champagneBottles * 1.1)} bouteilles (${Math.ceil(champagneGlasses * 1.1)} coupes)`;
     }
 
     // Calcul pour les bières
@@ -189,20 +280,20 @@ function calculateDrinks() {
       const beerBottles = Math.ceil(adults * drinkRatios.beer[level]);
       // Calculer le nombre de fûts équivalents (1 fût = 50 bouteilles)
       const beerKegs = Math.ceil(beerBottles / 50);
-      // Stocker le résultat pour les bières
-      results["Bières"] = `${beerBottles} bouteilles ou ${beerKegs} fût(s)`;
+      // Stocker les résultats pour les bières
+      results.base["Bières"] = `${beerBottles} bouteilles ou ${beerKegs} fût(s)`;
+      results.withMargin["Bières"] = `${Math.ceil(beerBottles * 1.1)} bouteilles ou ${Math.ceil(beerKegs * 1.1)} fût(s)`;
     }
 
     // Calcul pour les cocktails avec alcool
-    if (selectedDrinks.cocktails) {
+    if (selectedDrinks["cocktails-alcoholic"]) {
       // Calculer le nombre de verres de cocktail (2 par adulte)
       const cocktailGlasses = Math.ceil(adults * 2);
       // Calculer les litres d'alcool fort nécessaires (0.15L par verre)
       const cocktailLiters = Math.ceil(cocktailGlasses * 0.15);
-      // Stocker le résultat pour les cocktails
-      results[
-        "Cocktails"
-      ] = `${cocktailLiters} litres d'alcool fort (${cocktailGlasses} verres)`;
+      // Stocker les résultats pour les cocktails
+      results.base["Cocktails avec alcool"] = `${cocktailLiters} litres d'alcool fort (${cocktailGlasses} verres)`;
+      results.withMargin["Cocktails avec alcool"] = `${Math.ceil(cocktailLiters * 1.1)} litres d'alcool fort (${Math.ceil(cocktailGlasses * 1.1)} verres)`;
     }
 
     // Calcul pour les alcools forts individuels
@@ -211,13 +302,21 @@ function calculateDrinks() {
       const whiskeyBottles = Math.ceil(adults * drinkRatios.spirits[level]);
       // Calculer le nombre de bouteilles de vodka nécessaires
       const vodkaBottles = Math.ceil(adults * drinkRatios.spirits[level]);
+      // Calculer les litres de jus/soda nécessaires (20cl pour 4cl d'alcool)
+      const juiceLiters = Math.ceil((whiskeyBottles + vodkaBottles) * 0.75 * 5); // 5 fois plus de jus que d'alcool
 
       // Stocker les résultats pour chaque type de spiritueux
-      results["Whisky"] = `${whiskeyBottles} bouteille(s) 75cl`;
-      results["Vodka"] = `${vodkaBottles} bouteille(s) 75cl`;
-      results[
-        "Autres spiritueux"
-      ] = `${whiskeyBottles} bouteille(s) 75cl (rhum, tequila, etc.)`;
+      results.base["Whisky"] = `${whiskeyBottles} bouteille(s) 75cl`;
+      results.withMargin["Whisky"] = `${Math.ceil(whiskeyBottles * 1.1)} bouteille(s) 75cl`;
+      
+      results.base["Vodka"] = `${vodkaBottles} bouteille(s) 75cl`;
+      results.withMargin["Vodka"] = `${Math.ceil(vodkaBottles * 1.1)} bouteille(s) 75cl`;
+      
+      results.base["Jus/Soda pour cocktails"] = `${juiceLiters} litres`;
+      results.withMargin["Jus/Soda pour cocktails"] = `${Math.ceil(juiceLiters * 1.1)} litres`;
+      
+      results.base["Autres spiritueux"] = `${whiskeyBottles} bouteille(s) 75cl (rhum, tequila, etc.)`;
+      results.withMargin["Autres spiritueux"] = `${Math.ceil(whiskeyBottles * 1.1)} bouteille(s) 75cl (rhum, tequila, etc.)`;
     }
   }
 
@@ -229,8 +328,9 @@ function calculateDrinks() {
     const softLiters = Math.ceil((adults * 0.5 + children * 0.8) * 1);
     // Conversion en bouteilles de 1.5L
     const softBottles = Math.ceil(softLiters / 1.5);
-    // Stocker le résultat pour les boissons sucrées
-    results["Boissons sucrées"] = `${softBottles} bouteilles 1.5L (${softLiters} litres)`;
+    // Stocker les résultats pour les boissons sucrées
+    results.base["Boissons sucrées"] = `${softBottles} bouteilles 1.5L (${softLiters} litres)`;
+    results.withMargin["Boissons sucrées"] = `${Math.ceil(softBottles * 1.1)} bouteilles 1.5L (${Math.ceil(softLiters * 1.1)} litres)`;
   }
 
   // Calcul pour l'eau
@@ -247,36 +347,20 @@ function calculateDrinks() {
     const sparklingWaterBottles = Math.ceil(sparklingWaterLiters / 1.5);
     
     // Stocker les résultats pour l'eau
-    results["Eau plate"] = `${stillWaterBottles} bouteilles 1.5L (${stillWaterLiters} litres)`;
-    results["Eau pétillante"] = `${sparklingWaterBottles} bouteilles 1.5L (${sparklingWaterLiters} litres)`;
-  }
-
-  // Application d'une marge de sécurité de 10% sur toutes les quantités
-  for (let key in results) {
-    // Vérifier si le résultat contient des bouteilles ou litres
-    if (
-      results[key].includes("bouteilles") ||
-      results[key].includes("litres")
-    ) {
-      // Extraire tous les nombres du résultat
-      const numbers = results[key].match(/\d+/g);
-      if (numbers) {
-        // Prendre le premier nombre (quantité principale)
-        const originalQuantity = parseInt(numbers[0]);
-        // Appliquer la marge de 10%
-        const withMargin = Math.ceil(originalQuantity * 1.1);
-        // Remplacer la quantité originale par la nouvelle quantité
-        results[key] = results[key].replace(
-          originalQuantity.toString(),
-          withMargin.toString()
-        );
-      }
-    }
+    results.base["Eau plate"] = `${stillWaterBottles} bouteilles 1.5L (${stillWaterLiters} litres)`;
+    results.withMargin["Eau plate"] = `${Math.ceil(stillWaterBottles * 1.1)} bouteilles 1.5L (${Math.ceil(stillWaterLiters * 1.1)} litres)`;
+    
+    results.base["Eau pétillante"] = `${sparklingWaterBottles} bouteilles 1.5L (${sparklingWaterLiters} litres)`;
+    results.withMargin["Eau pétillante"] = `${Math.ceil(sparklingWaterBottles * 1.1)} bouteilles 1.5L (${Math.ceil(sparklingWaterLiters * 1.1)} litres)`;
   }
 
   // Afficher les résultats calculés
   displayResults(results);
 }
+
+// ============================================================================
+// FONCTIONS D'AFFICHAGE DES RÉSULTATS
+// ============================================================================
 
 // Fonction d'affichage des résultats
 function displayResults(results) {
@@ -286,30 +370,48 @@ function displayResults(results) {
   const resultsList = document.getElementById("resultsList");
 
   // Vérifier s'il y a des résultats à afficher
-  if (Object.keys(results).length === 0) {
+  if (Object.keys(results.base).length === 0) {
     // Afficher un message si aucune boisson n'est sélectionnée
-    resultsList.innerHTML =
-      "<p>Veuillez sélectionner au moins un type de boisson.</p>";
+    resultsList.innerHTML = "<p>Veuillez sélectionner au moins un type de boisson.</p>";
     // Rendre visible la section des résultats
     resultsDiv.style.display = "block";
     return;
   }
 
   // Commencer la construction du HTML des résultats
-  let html = '<div class="results-grid">';
+  let html = '<div class="results-container">';
+  
+  // En-tête avec les colonnes
+  html += `
+    <div class="results-header">
+      <div class="results-column">
+        <h4>📊 Quantité de base</h4>
+      </div>
+      <div class="results-column">
+        <h4>📈 Quantité avec marge 10%</h4>
+      </div>
+    </div>
+  `;
 
-  // Parcourir chaque boisson dans les résultats
-  for (let drink in results) {
-    // Créer un élément de résultat pour chaque boisson
+  // Grille des résultats
+  html += '<div class="results-grid">';
+
+  // Parcourir chaque boisson dans les résultats de base
+  for (let drink in results.base) {
+    // Créer un élément de résultat pour chaque boisson avec deux colonnes
     html += `
-            <div class="result-item">
-                <div class="result-drink">${drink}</div>
-                <div class="result-quantity">${results[drink]}</div>
-            </div>
-        `;
+      <div class="result-item">
+        <div class="result-drink">${drink}</div>
+        <div class="result-quantities">
+          <div class="result-quantity-base">${results.base[drink]}</div>
+          <div class="result-quantity-margin">${results.withMargin[drink]}</div>
+        </div>
+      </div>
+    `;
   }
 
   // Fermer la grille des résultats
+  html += "</div>";
   html += "</div>";
 
   // Ajouter une section de conseils personnalisés
@@ -318,19 +420,16 @@ function displayResults(results) {
   html += '<ul class="tips-list">';
 
   // Ajouter des conseils spécifiques selon les boissons sélectionnées
-  if (results["Vin rouge"] || results["Vin blanc"]) {
-    html +=
-      "<li>🍷 Servez le vin rouge à 16-18°C et le vin blanc à 8-10°C</li>";
+  if (results.base["Vin rouge"] || results.base["Vin blanc"]) {
+    html += "<li>🍷 Servez le vin rouge à 16-18°C et le vin blanc à 8-10°C</li>";
   }
 
-  if (results["Champagne"]) {
-    html +=
-      "<li>🥂 Gardez le champagne au frais (6-8°C) et ouvrez juste avant de servir</li>";
+  if (results.base["Champagne"]) {
+    html += "<li>🥂 Gardez le champagne au frais (6-8°C) et ouvrez juste avant de servir</li>";
   }
 
-  if (results["Bières"]) {
-    html +=
-      "<li>🍺 Prévoyez de la glace pour maintenir les bières fraîches</li>";
+  if (results.base["Bières"]) {
+    html += "<li>🍺 Prévoyez de la glace pour maintenir les bières fraîches</li>";
   }
 
   // Ajouter des conseils généraux
@@ -348,6 +447,10 @@ function displayResults(results) {
   resultsDiv.scrollIntoView({ behavior: "smooth" });
 }
 
+// ============================================================================
+// FONCTIONS DE GESTION DES RÉSULTATS
+// ============================================================================
+
 // Fonction pour accepter les résultats
 function acceptResults() {
   // Récupérer l'élément conteneur des résultats
@@ -358,20 +461,72 @@ function acceptResults() {
   confirmationDiv.className = "confirmation-message";
   // Définir le contenu HTML du message de confirmation
   confirmationDiv.innerHTML = `
-        <div class="success-message">
-            <h3>✅ Parfait !</h3>
-            <p>Vos estimations sont prêtes. Vous pouvez maintenant imprimer cette liste ou la sauvegarder.</p>
-            <div class="action-buttons">
-                <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimer la liste</button>
-                <button class="btn btn-secondary" onclick="resetCalculator()">🔄 Nouveau calcul</button>
-            </div>
-        </div>
-    `;
+    <div class="success-message">
+      <h3>✅ Parfait !</h3>
+      <p>Vos estimations sont prêtes. Vous pouvez maintenant recevoir cette liste par email ou faire un nouveau calcul.</p>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="showEmailForm()">📧 Recevoir par email</button>
+        <button class="btn btn-secondary" onclick="resetCalculator()">🔄 Nouveau calcul</button>
+      </div>
+    </div>
+  `;
 
   // Ajouter le message de confirmation aux résultats
   resultsDiv.appendChild(confirmationDiv);
   // Faire défiler vers le message de confirmation
   confirmationDiv.scrollIntoView({ behavior: "smooth" });
+}
+
+// Fonction pour afficher le formulaire d'email
+function showEmailForm() {
+  // Récupérer l'élément conteneur des résultats
+  const resultsDiv = document.getElementById("results");
+  // Créer un élément pour le formulaire d'email
+  const emailDiv = document.createElement("div");
+  // Assigner une classe CSS au formulaire d'email
+  emailDiv.className = "email-form";
+  // Définir le contenu HTML du formulaire d'email
+  emailDiv.innerHTML = `
+    <div class="email-content">
+      <h3>📧 Recevoir vos résultats par email</h3>
+      <p>Entrez votre adresse email pour recevoir vos estimations en PDF :</p>
+      <div class="email-input-group">
+        <input type="email" id="userEmail" placeholder="votre@email.com" required>
+        <button class="btn btn-primary" onclick="sendEmail()">📤 Envoyer</button>
+      </div>
+      <div class="email-info">
+        <p>📋 Vous recevrez un PDF détaillé avec toutes vos estimations de boissons</p>
+      </div>
+    </div>
+  `;
+
+  // Ajouter le formulaire d'email aux résultats
+  resultsDiv.appendChild(emailDiv);
+  // Faire défiler vers le formulaire d'email
+  emailDiv.scrollIntoView({ behavior: "smooth" });
+}
+
+// Fonction pour envoyer l'email (simulation)
+function sendEmail() {
+  // Récupérer l'adresse email saisie
+  const email = document.getElementById("userEmail").value;
+  
+  // Valider l'email
+  if (!email || !email.includes("@")) {
+    alert("Veuillez saisir une adresse email valide");
+    return;
+  }
+
+  // Simuler l'envoi d'email (dans un vrai projet, cela appellerait une API)
+  const emailDiv = document.querySelector(".email-form");
+  emailDiv.innerHTML = `
+    <div class="email-success">
+      <h3>✅ Email envoyé !</h3>
+      <p>Vos estimations ont été envoyées à ${email}</p>
+      <p>📧 Vérifiez votre boîte de réception (et vos spams)</p>
+      <button class="btn btn-secondary" onclick="resetCalculator()">🔄 Nouveau calcul</button>
+    </div>
+  `;
 }
 
 // Fonction pour personnaliser les résultats
@@ -384,32 +539,32 @@ function customizeResults() {
   customizeDiv.className = "customize-section";
   // Définir le contenu HTML de la section de personnalisation
   customizeDiv.innerHTML = `
-        <div class="customize-content">
-            <h3>🎯 Personnaliser vos quantités</h3>
-            <p>Ajustez les quantités selon vos préférences :</p>
-            <div class="customize-form">
-                <div class="form-group">
-                    <label>Facteur de consommation :</label>
-                    <select id="customFactor" onchange="applyCustomFactor()">
-                        <option value="0.8">Plus léger (-20%)</option>
-                        <option value="1.0" selected>Standard</option>
-                        <option value="1.2">Plus généreux (+20%)</option>
-                        <option value="1.5">Très généreux (+50%)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="summerBonus" onchange="applyCustomFactor()">
-                        Bonus été (+30% boissons fraîches)
-                    </label>
-                </div>
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="acceptResults()">✅ Valider ces ajustements</button>
-                    <button class="btn btn-secondary" onclick="resetCustomization()">❌ Annuler</button>
-                </div>
-            </div>
+    <div class="customize-content">
+      <h3>🎯 Personnaliser vos quantités</h3>
+      <p>Ajustez les quantités selon vos préférences :</p>
+      <div class="customize-form">
+        <div class="form-group">
+          <label>Facteur de consommation :</label>
+          <select id="customFactor" onchange="applyCustomFactor()">
+            <option value="0.8">Plus léger (-20%)</option>
+            <option value="1.0" selected>Standard</option>
+            <option value="1.2">Plus généreux (+20%)</option>
+            <option value="1.5">Très généreux (+50%)</option>
+          </select>
         </div>
-    `;
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="summerBonus" onchange="applyCustomFactor()">
+            Bonus été (+30% boissons fraîches)
+          </label>
+        </div>
+        <div class="action-buttons">
+          <button class="btn btn-primary" onclick="acceptResults()">✅ Valider ces ajustements</button>
+          <button class="btn btn-secondary" onclick="resetCustomization()">❌ Annuler</button>
+        </div>
+      </div>
+    </div>
+  `;
 
   // Ajouter la section de personnalisation aux résultats
   resultsDiv.appendChild(customizeDiv);
@@ -439,12 +594,10 @@ function applyCustomFactor() {
     messageDiv.className = "factor-message";
     // Définir le contenu du message
     messageDiv.innerHTML = `
-            <p style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                ✅ Facteur appliqué : ${factor}x ${
-      summerBonus ? "(+ bonus été)" : ""
-    }
-            </p>
-        `;
+      <p style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin: 10px 0;">
+        ✅ Facteur appliqué : ${factor}x ${summerBonus ? "(+ bonus été)" : ""}
+      </p>
+    `;
 
     // Ajouter le message s'il n'existe pas déjà
     if (!customizeSection.querySelector(".factor-message")) {
@@ -462,6 +615,10 @@ function resetCustomization() {
     customizeSection.remove();
   }
 }
+
+// ============================================================================
+// FONCTIONS DE RÉINITIALISATION
+// ============================================================================
 
 // Fonction pour réinitialiser complètement le calculateur
 function resetCalculator() {
@@ -483,10 +640,21 @@ function resetCalculator() {
 
   // Masquer la section des résultats
   document.getElementById("results").style.display = "none";
+  
+  // Masquer les messages d'erreur
+  document.getElementById("adultsError").style.display = "none";
+  document.getElementById("drinksError").style.display = "none";
+
+  // Afficher toutes les boissons alcoolisées
+  showAlcoholicDrinks();
 
   // Faire défiler vers le haut du calculateur
   document.getElementById("calculator").scrollIntoView({ behavior: "smooth" });
 }
+
+// ============================================================================
+// INITIALISATION AU CHARGEMENT DE LA PAGE
+// ============================================================================
 
 // Initialisation au chargement de la page
 document.addEventListener("DOMContentLoaded", function () {
@@ -504,5 +672,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // Si aucun alcool n'est sélectionné, masquer le type de repas
   if (alcoholLevel === "none") {
     mealGroup.classList.add("hidden");
+    hideAlcoholicDrinks();
   }
+  
+  // Valider les champs au chargement
+  validateAdults();
+  validateDrinksSelection();
 });

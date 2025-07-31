@@ -14,6 +14,7 @@
 </head>
 
 <body>
+    <!-- En-tête principal avec titre et call-to-action -->
     <header class="hero">
         <h1>💍 Wedding Planner</h1>
         <p>Organisez votre mariage parfait avec nos outils personnalisés</p>
@@ -21,18 +22,22 @@
     </header>
 
     <main class="container">
-        <!-- Calculatrice de boissons -->
+        <!-- Section principale de la calculatrice de boissons -->
         <section class="section calculator" id="calculator">
             <h2>🥂 Calculatrice de Boissons</h2>
             <p>
                 Calculez précisément vos besoins en boissons pour éviter les surplus ou les pénuries
             </p>
 
-            <form>
+            <!-- Formulaire principal de calcul -->
+            <form id="drinksForm">
+                <!-- Ligne avec nombre d'adultes et d'enfants -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="adults">Nombre d'adultes</label>
+                        <label for="adults">Nombre d'adultes *</label>
                         <input type="number" id="adults" min="1" value="50" required>
+                        <!-- Message d'erreur pour la validation du nombre d'adultes -->
+                        <span class="error-message" id="adultsError"></span>
                     </div>
                     <div class="form-group">
                         <label for="children">Nombre d'enfants</label>
@@ -40,8 +45,9 @@
                     </div>
                 </div>
 
+                <!-- Sélection du niveau de consommation d'alcool -->
                 <div class="form-group">
-                    <label for="alcoholLevel">Niveau de consommation d'alcool</label>
+                    <label for="alcoholLevel">Niveau de consommation d'alcool *</label>
                     <select id="alcoholLevel" required>
                         <option value="none">Sans alcool</option>
                         <option value="low">Faible</option>
@@ -50,6 +56,7 @@
                     </select>
                 </div>
 
+                <!-- Type de repas (masqué si sans alcool) -->
                 <div class="form-group" id="mealTypeGroup">
                     <label for="mealType">Type de repas (pour les vins)</label>
                     <select id="mealType">
@@ -60,66 +67,81 @@
                     </select>
                 </div>
 
+                <!-- Sélection des types de boissons -->
                 <fieldset class="drinks-selection">
-                    <legend>Types de boissons à prévoir</legend>
-                    <div class="drinks-grid">
-                        <div class="drink-option tooltip" data-drink="soft">
+                    <legend>Types de boissons à prévoir *</legend>
+                    <div class="drinks-grid" id="drinksGrid">
+                        <!-- Boissons non alcoolisées (toujours visibles) -->
+                        <div class="drink-option tooltip" data-drink="soft" data-category="non-alcoholic">
                             <input type="checkbox" id="soft" checked>
                             <label for="soft">Boissons sucrées</label>
                             <span class="tooltiptext">Sodas, jus de fruits, limonades. Idéal pour les enfants et
                                 non-buveurs.</span>
                         </div>
 
-                        <div class="drink-option tooltip" data-drink="wine">
+                        <div class="drink-option tooltip" data-drink="water" data-category="non-alcoholic">
+                            <input type="checkbox" id="water" checked>
+                            <label for="water">Eau (plate/pétillante)</label>
+                            <span class="tooltiptext">Indispensable ! 70% plate, 30% pétillante.</span>
+                        </div>
+
+                        <!-- Boissons alcoolisées (masquées si sans alcool) -->
+                        <div class="drink-option tooltip alcoholic-drink" data-drink="wine" data-category="alcoholic">
                             <input type="checkbox" id="wine" checked>
                             <label for="wine">Vins (rouge/blanc/rosé)</label>
                             <span class="tooltiptext">Vin rouge pour viandes, blanc pour poissons, rosé pour
                                 l'apéritif.</span>
                         </div>
 
-                        <div class="drink-option tooltip" data-drink="beer">
-                            <input type="checkbox" id="beer">
-                            <label for="beer">Bières</label>
-                            <span class="tooltiptext">Bières en canettes ou fût. Rafraîchissant pour l'été.</span>
-                        </div>
-
-                        <div class="drink-option tooltip" data-drink="champagne">
+                        <div class="drink-option tooltip alcoholic-drink" data-drink="champagne" data-category="alcoholic">
                             <input type="checkbox" id="champagne" checked>
                             <label for="champagne">Champagne</label>
                             <span class="tooltiptext">Pour le vin d'honneur et les toasts. 2 coupes par personne
                                 max.</span>
                         </div>
 
-                        <div class="drink-option tooltip" data-drink="water">
-                            <input type="checkbox" id="water" checked>
-                            <label for="water">Eau (plate/pétillante)</label>
-                            <span class="tooltiptext">Indispensable ! 70% plate, 30% pétillante.</span>
+                        <div class="drink-option tooltip alcoholic-drink" data-drink="beer" data-category="alcoholic">
+                            <input type="checkbox" id="beer">
+                            <label for="beer">Bières</label>
+                            <span class="tooltiptext">Bières en canettes ou fût. Rafraîchissant pour l'été.</span>
                         </div>
 
-                        <div class="drink-option tooltip" data-drink="cocktails">
-                            <input type="checkbox" id="cocktails">
-                            <label for="cocktails">Cocktails</label>
+                        <!-- Cocktails séparés en deux options distinctes -->
+                        <div class="drink-option tooltip alcoholic-drink" data-drink="cocktails-alcoholic" data-category="alcoholic">
+                            <input type="checkbox" id="cocktails-alcoholic">
+                            <label for="cocktails-alcoholic">Cocktails avec alcool</label>
                             <span class="tooltiptext">Avec alcool fort. Pour l'apéritif ou la soirée dansante.</span>
                         </div>
 
-                        <div class="drink-option tooltip" data-drink="spirits">
+                        <div class="drink-option tooltip" data-drink="cocktails-non-alcoholic" data-category="non-alcoholic">
+                            <input type="checkbox" id="cocktails-non-alcoholic">
+                            <label for="cocktails-non-alcoholic">Cocktails sans alcool</label>
+                            <span class="tooltiptext">Mocktails et boissons rafraîchissantes pour tous.</span>
+                        </div>
+
+                        <div class="drink-option tooltip alcoholic-drink" data-drink="spirits" data-category="alcoholic">
                             <input type="checkbox" id="spirits">
                             <label for="spirits">Alcools forts</label>
                             <span class="tooltiptext">Whisky, vodka, rhum, tequila. Pour les cocktails ou
                                 digestifs.</span>
                         </div>
                     </div>
+                    <!-- Message d'erreur si aucune boisson n'est sélectionnée -->
+                    <span class="error-message" id="drinksError"></span>
                 </fieldset>
 
+                <!-- Bouton de calcul principal -->
                 <button type="button" class="calculate-btn" onclick="calculateDrinks()">
                     🧮 Calculer mes besoins
                 </button>
             </form>
 
+            <!-- Section des résultats calculés -->
             <aside class="results" id="results">
-                <h3>📋 Vos besoins en boissons (marge 10% incluse)</h3>
+                <h3>📋 Vos besoins en boissons</h3>
                 <div id="resultsList"></div>
 
+                <!-- Boutons d'action après calcul -->
                 <div class="action-buttons">
                     <button class="btn btn-primary" onclick="acceptResults()">
                         ✅ Ces estimations me conviennent
@@ -288,10 +310,12 @@
         </section>
     </main>
 
+    <!-- Pied de page -->
     <footer>
         <!-- Espace pour ajouter un footer si nécessaire -->
     </footer>
 
+    <!-- Script principal -->
     <script src="script.js"></script>
 </body>
 
