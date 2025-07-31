@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marigue - Personnalisation des Boissons</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Styles spécifiques à la page de personnalisation */
+        .personalization-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 90px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header h1 {
+            color: #333;
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            color: #666;
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 90px;
+            left: 20px;
+            background: linear-gradient(135deg, #daa520, #b8860b);
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(218, 165, 32, 0.3);
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(218, 165, 32, 0.4);
+        }
+
+        .guests-form {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .guests-form h2 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        .guests-inputs {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .guest-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .guest-input-group label {
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .guest-input-group input {
+            width: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .guest-input-group input:focus {
+            outline: none;
+            border-color: #daa520;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
+        }
+
+        .drinks-selection {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .drinks-selection h2 {
+            color: #333;
+            margin-bottom: 40px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        .drinks-category {
+            margin-bottom: 50px;
+        }
+
+        .drinks-category h3 {
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 1.4em;
+        }
+
+        .drinks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .drink-item {
+            background: #fafafa;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .drink-item:hover {
+            border-color: #daa520;
+            box-shadow: 0 5px 20px rgba(218, 165, 32, 0.1);
+        }
+
+        .drink-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .drink-checkbox {
+            width: 22px;
+            height: 22px;
+            margin-right: 15px;
+            accent-color: #daa520;
+        }
+
+        .drink-header label {
+            color: #333;
+            font-weight: 600;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .drink-options {
+            margin-left: 37px;
+        }
+
+        .volume-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .volume-select:enabled {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        .volume-select:enabled:focus {
+            outline: none;
+            border-color: #daa520;
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
+        }
+
+        .calculate-section {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #daa520, #b8860b);
+            border: none;
+            padding: 20px 50px;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(218, 165, 32, 0.3);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(218, 165, 32, 0.4);
+        }
+
+        .calculate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 1em;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .results-section {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+            display: none;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-header h3 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .results-column {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .results-column h4 {
+            color: #555;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        .result-item {
+            background: #ffffff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #daa520;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-item strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .email-form {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .email-form h4 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.3em;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: #daa520;
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
+        }
+
+        .email-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .personalization-page {
+                padding: 10px;
+                padding-top: 80px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-header h1 {
+                font-size: 2em;
+            }
+
+            .back-button {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 20px;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .guests-inputs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .drinks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .email-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="personalization-page">
+        <!-- Bouton retour -->
+        <button class="back-button" onclick="window.location.href='index.html'">
+            <i class="fas fa-arrow-left"></i> Retour au calculateur principal
+        </button>
+
+        <!-- En-tête de la page -->
+        <div class="page-header">
+            <h1><i class="fas fa-cogs"></i> Personnalisation des Boissons</h1>
+            <p>Sélectionnez vos boissons préférées et calculez vos besoins personnalisés</p>
+        </div>
+
+        <!-- Formulaire pour le nombre d'invités -->
+        <div class="guests-form">
+            <h2><i class="fas fa-users"></i> Nombre d'invités</h2>
+            <div class="guests-inputs">
+                <div class="guest-input-group">
+                    <label for="adults">Nombre d'adultes *</label>
+                    <input type="number" id="adults" min="0" value="0" required>
+                    <span class="error-message" id="adultsError">Veuillez renseigner le nombre d'adultes</span>
+                </div>
+                <div class="guest-input-group">
+                    <label for="children">Nombre d'enfants</label>
+                    <input type="number" id="children" min="0" value="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sélection des boissons -->
+        <div class="drinks-selection">
+            <h2><i class="fas fa-wine-glass-alt"></i> Sélectionnez vos boissons</h2>
+            
+            <!-- Boissons Soft -->
+            <div class="drinks-category">
+                <h3><i class="fas fa-glass-whiskey"></i> Boissons Soft</h3>
+                <div class="drinks-grid">
+                    <!-- Eau -->
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="water" class="drink-checkbox">
+                            <label for="water">Eau plate</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="water" disabled>
+                                <option value="0.5">50cl</option>
+                                <option value="1">1L</option>
+                                <option value="1.5">1.5L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="sparkling-water" class="drink-checkbox">
+                            <label for="sparkling-water">Eau pétillante</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="sparkling-water" disabled>
+                                <option value="0.5">50cl</option>
+                                <option value="1">1L</option>
+                                <option value="1.5">1.5L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="coca" class="drink-checkbox">
+                            <label for="coca">Coca</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="coca" disabled>
+                                <option value="0.33">33cl</option>
+                                <option value="0.5">50cl</option>
+                                <option value="1">1L</option>
+                                <option value="1.5">1.5L</option>
+                                <option value="2">2L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="fanta" class="drink-checkbox">
+                            <label for="fanta">Fanta</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="fanta" disabled>
+                                <option value="0.33">33cl</option>
+                                <option value="0.5">50cl</option>
+                                <option value="1">1L</option>
+                                <option value="1.5">1.5L</option>
+                                <option value="2">2L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="sprite" class="drink-checkbox">
+                            <label for="sprite">Sprite</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="sprite" disabled>
+                                <option value="0.33">33cl</option>
+                                <option value="0.5">50cl</option>
+                                <option value="1">1L</option>
+                                <option value="1.5">1.5L</option>
+                                <option value="2">2L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="orangina" class="drink-checkbox">
+                            <label for="orangina">Orangina</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="orangina" disabled>
+                                <option value="0.33">33cl</option>
+                                <option value="0.5">50cl</option>
+                                <option value="1">1L</option>
+                                <option value="1.5">1.5L</option>
+                                <option value="2">2L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="fruit-juice" class="drink-checkbox">
+                            <label for="fruit-juice">Jus de fruits</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="fruit-juice" disabled>
+                                <option value="0.25">25cl</option>
+                                <option value="1">1L</option>
+                                <option value="1.5">1.5L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="syrup" class="drink-checkbox">
+                            <label for="syrup">Sirop (dilution 1:7)</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="syrup" disabled>
+                                <option value="0.7">70cl</option>
+                                <option value="1">1L</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vins -->
+            <div class="drinks-category">
+                <h3><i class="fas fa-wine-bottle"></i> Vins</h3>
+                <div class="drinks-grid">
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="red-wine" class="drink-checkbox">
+                            <label for="red-wine">Vin rouge</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="red-wine" disabled>
+                                <option value="0.75">75cl</option>
+                                <option value="1.5">1.5L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="rose-wine" class="drink-checkbox">
+                            <label for="rose-wine">Vin rosé</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="rose-wine" disabled>
+                                <option value="0.75">75cl</option>
+                                <option value="1.5">1.5L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="white-wine" class="drink-checkbox">
+                            <label for="white-wine">Vin blanc</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="white-wine" disabled>
+                                <option value="0.75">75cl</option>
+                                <option value="1.5">1.5L</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Champagne/Crémant -->
+            <div class="drinks-category">
+                <h3><i class="fas fa-champagne-glasses"></i> Champagne/Crémant</h3>
+                <div class="drinks-grid">
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="champagne" class="drink-checkbox">
+                            <label for="champagne">Champagne/Crémant</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="champagne" disabled>
+                                <option value="0.75">75cl</option>
+                                <option value="1.5">1.5L</option>
+                                <option value="3">3L</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bières -->
+            <div class="drinks-category">
+                <h3><i class="fas fa-beer"></i> Bières</h3>
+                <div class="drinks-grid">
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="beer-bottles" class="drink-checkbox">
+                            <label for="beer-bottles">Bouteilles individuelles</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="beer-bottles" disabled>
+                                <option value="0.25">25cl</option>
+                                <option value="0.33">33cl</option>
+                                <option value="0.5">50cl</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="beer-cans" class="drink-checkbox">
+                            <label for="beer-cans">Canettes</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="beer-cans" disabled>
+                                <option value="0.33">33cl</option>
+                                <option value="0.5">50cl</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="beer-kegs" class="drink-checkbox">
+                            <label for="beer-kegs">Fûts</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="beer-kegs" disabled>
+                                <option value="5">5L</option>
+                                <option value="20">20L</option>
+                                <option value="30">30L</option>
+                                <option value="50">50L</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alcools forts -->
+            <div class="drinks-category">
+                <h3><i class="fas fa-cocktail"></i> Alcools forts</h3>
+                <div class="drinks-grid">
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="whisky" class="drink-checkbox">
+                            <label for="whisky">Whisky</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="whisky" disabled>
+                                <option value="0.7">70cl</option>
+                                <option value="1">1L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="vodka" class="drink-checkbox">
+                            <label for="vodka">Vodka</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="vodka" disabled>
+                                <option value="0.7">70cl</option>
+                                <option value="1">1L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="rum" class="drink-checkbox">
+                            <label for="rum">Rhum</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="rum" disabled>
+                                <option value="0.7">70cl</option>
+                                <option value="1">1L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="gin" class="drink-checkbox">
+                            <label for="gin">Gin</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="gin" disabled>
+                                <option value="0.7">70cl</option>
+                                <option value="1">1L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="tequila" class="drink-checkbox">
+                            <label for="tequila">Tequila</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="tequila" disabled>
+                                <option value="0.7">70cl</option>
+                                <option value="1">1L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="baileys" class="drink-checkbox">
+                            <label for="baileys">Baileys</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="baileys" disabled>
+                                <option value="0.5">50cl</option>
+                                <option value="0.7">70cl</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="amaretto" class="drink-checkbox">
+                            <label for="amaretto">Amaretto</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="amaretto" disabled>
+                                <option value="0.5">50cl</option>
+                                <option value="0.7">70cl</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cocktails -->
+            <div class="drinks-category">
+                <h3><i class="fas fa-martini-glass"></i> Cocktails</h3>
+                <div class="drinks-grid">
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="mojito" class="drink-checkbox">
+                            <label for="mojito">Mojito (~20cl/verre)</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="mojito" disabled>
+                                <option value="1">1 verre</option>
+                                <option value="5">5 verres</option>
+                                <option value="10">10 verres</option>
+                                <option value="20">20 verres</option>
+                                <option value="50">50 verres</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="caipirinha" class="drink-checkbox">
+                            <label for="caipirinha">Caïpirinha (~15cl/verre)</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="caipirinha" disabled>
+                                <option value="1">1 verre</option>
+                                <option value="5">5 verres</option>
+                                <option value="10">10 verres</option>
+                                <option value="20">20 verres</option>
+                                <option value="50">50 verres</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="spritz" class="drink-checkbox">
+                            <label for="spritz">Spritz (~20cl/verre)</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="spritz" disabled>
+                                <option value="1">1 verre</option>
+                                <option value="5">5 verres</option>
+                                <option value="10">10 verres</option>
+                                <option value="20">20 verres</option>
+                                <option value="50">50 verres</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="punch" class="drink-checkbox">
+                            <label for="punch">Punch (~25cl/verre)</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="punch" disabled>
+                                <option value="1">1 verre</option>
+                                <option value="5">5 verres</option>
+                                <option value="10">10 verres</option>
+                                <option value="20">20 verres</option>
+                                <option value="50">50 verres</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="drink-item">
+                        <div class="drink-header">
+                            <input type="checkbox" id="sangria" class="drink-checkbox">
+                            <label for="sangria">Sangria (~20cl/verre)</label>
+                        </div>
+                        <div class="drink-options">
+                            <select class="volume-select" data-drink="sangria" disabled>
+                                <option value="1">1 verre</option>
+                                <option value="5">5 verres</option>
+                                <option value="10">10 verres</option>
+                                <option value="20">20 verres</option>
+                                <option value="50">50 verres</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section de calcul -->
+        <div class="calculate-section">
+            <button class="calculate-btn" onclick="calculateCustomDrinks()">
+                <i class="fas fa-calculator"></i> Calculer mes besoins personnalisés
+            </button>
+        </div>
+
+        <!-- Section des résultats -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h3><i class="fas fa-chart-bar"></i> Vos besoins personnalisés</h3>
+                <p>Calculs basés sur vos sélections et le nombre d'invités</p>
+            </div>
+            
+            <div class="results-grid" id="resultsGrid">
+                <!-- Les résultats seront générés ici -->
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="showEmailForm()">
+                    <i class="fas fa-envelope"></i> Recevoir par email
+                </button>
+                <button class="btn btn-secondary" onclick="resetForm()">
+                    <i class="fas fa-redo"></i> Nouveau calcul
+                </button>
+            </div>
+
+            <!-- Formulaire email -->
+            <div class="email-form" id="emailForm">
+                <h4><i class="fas fa-envelope"></i> Envoyer les résultats par email</h4>
+                <input type="email" class="email-input" id="emailInput" placeholder="Votre adresse email" required>
+                <div class="email-buttons">
+                    <button class="btn btn-primary" onclick="sendEmail()">
+                        <i class="fas fa-paper-plane"></i> Envoyer
+                    </button>
+                    <button class="btn btn-secondary" onclick="hideEmailForm()">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Script spécifique à la page de personnalisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation des événements pour les checkboxes
+            initializeDrinkCheckboxes();
+            
+            // Validation en temps réel du nombre d'adultes
+            const adultsInput = document.getElementById('adults');
+            adultsInput.addEventListener('input', validateAdults);
+        });
+
+        // Fonction pour initialiser les événements des checkboxes
+        function initializeDrinkCheckboxes() {
+            const checkboxes = document.querySelectorAll('.drink-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    handleDrinkSelection(this);
+                });
+            });
+        }
+
+        // Fonction pour gérer la sélection d'une boisson
+        function handleDrinkSelection(checkbox) {
+            const drinkItem = checkbox.closest('.drink-item');
+            const volumeSelect = drinkItem.querySelector('.volume-select');
+            
+            if (checkbox.checked) {
+                // Activer le sélecteur de volume
+                volumeSelect.disabled = false;
+                volumeSelect.style.opacity = '1';
+            } else {
+                // Désactiver le sélecteur de volume
+                volumeSelect.disabled = true;
+                volumeSelect.style.opacity = '0.5';
+            }
+        }
+
+        // Fonction pour valider le nombre d'adultes
+        function validateAdults() {
+            const adultsInput = document.getElementById('adults');
+            const adultsError = document.getElementById('adultsError');
+            const calculateBtn = document.querySelector('.calculate-btn');
+            
+            if (adultsInput.value === '' || parseInt(adultsInput.value) === 0) {
+                adultsError.style.display = 'block';
+                calculateBtn.disabled = true;
+                return false;
+            } else {
+                adultsError.style.display = 'none';
+                calculateBtn.disabled = false;
+                return true;
+            }
+        }
+
+        // Fonction pour calculer les boissons personnalisées
+        function calculateCustomDrinks() {
+            // Validation du nombre d'adultes
+            if (!validateAdults()) {
+                return;
+            }
+
+            // Récupération des valeurs
+            const adults = parseInt(document.getElementById('adults').value) || 0;
+            const children = parseInt(document.getElementById('children').value) || 0;
+            const totalGuests = adults + children;
+
+            // Vérification qu'au moins une boisson est sélectionnée
+            const selectedDrinks = document.querySelectorAll('.drink-checkbox:checked');
+            if (selectedDrinks.length === 0) {
+                alert('Veuillez sélectionner au moins une boisson');
+                return;
+            }
+
+            // Initialisation des résultats
+            const results = {
+                base: {},
+                withMargin: {}
+            };
+
+            // Calcul pour chaque boisson sélectionnée
+            selectedDrinks.forEach(checkbox => {
+                const drinkId = checkbox.id;
+                const drinkItem = checkbox.closest('.drink-item');
+                const volumeSelect = drinkItem.querySelector('.volume-select');
+                const volume = parseFloat(volumeSelect.value);
+                const drinkName = checkbox.nextElementSibling.textContent.trim();
+
+                let quantity = 0;
+
+                // Calcul selon le type de boisson
+                if (drinkId.includes('water') || drinkId.includes('sparkling-water')) {
+                    // Eau : 1 bouteille pour 2 personnes
+                    quantity = Math.ceil(totalGuests / 2);
+                } else if (drinkId.includes('syrup')) {
+                    // Sirop : 1 bouteille pour 10 personnes (avec dilution 1:7)
+                    quantity = Math.ceil(totalGuests / 10);
+                } else if (drinkId.includes('wine') || drinkId.includes('champagne')) {
+                    // Vins et champagne : 1 bouteille pour 4 adultes
+                    quantity = Math.ceil(adults / 4);
+                } else if (drinkId.includes('beer')) {
+                    // Bières : 1 bouteille/canette pour 2 adultes
+                    quantity = Math.ceil(adults / 2);
+                } else if (drinkId.includes('whisky') || drinkId.includes('vodka') || 
+                            drinkId.includes('rum') || drinkId.includes('gin') || 
+                            drinkId.includes('tequila') || drinkId.includes('baileys') || 
+                            drinkId.includes('amaretto')) {
+                    // Alcools forts : 1 bouteille pour 8 adultes
+                    quantity = Math.ceil(adults / 8);
+                } else if (drinkId.includes('mojito') || drinkId.includes('caipirinha') || 
+                            drinkId.includes('spritz') || drinkId.includes('punch') || 
+                            drinkId.includes('sangria')) {
+                    // Cocktails : nombre de verres sélectionné
+                    quantity = parseInt(volumeSelect.value);
+                } else {
+                    // Boissons soft : 1 bouteille pour 3 personnes
+                    quantity = Math.ceil(totalGuests / 3);
+                }
+
+                // Stockage des résultats
+                results.base[drinkName] = {
+                    quantity: quantity,
+                    volume: volume,
+                    unit: getVolumeUnit(volume, drinkId)
+                };
+
+                results.withMargin[drinkName] = {
+                    quantity: Math.ceil(quantity * 1.1), // Marge de 10%
+                    volume: volume,
+                    unit: getVolumeUnit(volume, drinkId)
+                };
+            });
+
+            // Affichage des résultats
+            displayCustomResults(results);
+        }
+
+        // Fonction pour obtenir l'unité de volume
+        function getVolumeUnit(volume, drinkId) {
+            if (drinkId.includes('mojito') || drinkId.includes('caipirinha') || 
+                drinkId.includes('spritz') || drinkId.includes('punch') || 
+                drinkId.includes('sangria')) {
+                return 'verre(s)';
+            } else if (volume >= 1) {
+                return 'L';
+            } else {
+                return 'cl';
+            }
+        }
+
+        // Fonction pour afficher les résultats personnalisés
+        function displayCustomResults(results) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsGrid = document.getElementById('resultsGrid');
+
+            // Génération du HTML pour les résultats
+            let baseResultsHTML = '<div class="results-column"><h4><i class="fas fa-chart-line"></i> Quantité de base</h4>';
+            let marginResultsHTML = '<div class="results-column"><h4><i class="fas fa-chart-bar"></i> Quantité avec marge 10%</h4>';
+
+            // Ajout des résultats pour chaque boisson
+            Object.keys(results.base).forEach(drinkName => {
+                const baseData = results.base[drinkName];
+                const marginData = results.withMargin[drinkName];
+
+                // Formatage du volume
+                const volumeText = formatVolume(baseData.volume, baseData.unit);
+
+                baseResultsHTML += `
+                    <div class="result-item">
+                        <strong>${drinkName}:</strong> ${baseData.quantity} ${volumeText}
+                    </div>
+                `;
+
+                marginResultsHTML += `
+                    <div class="result-item">
+                        <strong>${drinkName}:</strong> ${marginData.quantity} ${volumeText}
+                    </div>
+                `;
+            });
+
+            baseResultsHTML += '</div>';
+            marginResultsHTML += '</div>';
+
+            // Affichage des résultats
+            resultsGrid.innerHTML = baseResultsHTML + marginResultsHTML;
+            resultsSection.style.display = 'block';
+
+            // Scroll vers les résultats
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Fonction pour formater le volume
+        function formatVolume(volume, unit) {
+            if (unit === 'verre(s)') {
+                return unit;
+            } else if (unit === 'L') {
+                return `${volume}L`;
+            } else {
+                return `${Math.round(volume * 100)}cl`;
+            }
+        }
+
+        // Fonction pour réinitialiser le formulaire
+        function resetForm() {
+            // Réinitialisation des inputs
+            document.getElementById('adults').value = '0';
+            document.getElementById('children').value = '0';
+
+            // Réinitialisation des checkboxes et sélecteurs
+            const checkboxes = document.querySelectorAll('.drink-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                const volumeSelect = checkbox.closest('.drink-item').querySelector('.volume-select');
+                volumeSelect.disabled = true;
+                volumeSelect.style.opacity = '0.5';
+            });
+
+            // Masquage des résultats
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('emailForm').style.display = 'none';
+
+            // Réactivation du bouton de calcul
+            document.querySelector('.calculate-btn').disabled = true;
+        }
+
+        // Fonction pour afficher le formulaire email
+        function showEmailForm() {
+            document.getElementById('emailForm').style.display = 'block';
+            document.getElementById('emailInput').focus();
+        }
+
+        // Fonction pour masquer le formulaire email
+        function hideEmailForm() {
+            document.getElementById('emailForm').style.display = 'none';
+            document.getElementById('emailInput').value = '';
+        }
+
+        // Fonction pour envoyer l'email
+        function sendEmail() {
+            const email = document.getElementById('emailInput').value;
+            
+            if (!email || !email.includes('@')) {
+                alert('Veuillez saisir une adresse email valide');
+                return;
+            }
+
+            // Simulation d'envoi d'email
+            alert(`📧 Vos résultats personnalisés ont été envoyés à ${email}\n\nUn PDF avec vos calculs sera joint à l'email.`);
+            
+            // Masquage du formulaire email
+            hideEmailForm();
+        }
+    </script>
+</body>
+</html>
