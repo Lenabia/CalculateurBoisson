@@ -78,6 +78,13 @@
         .calculator h2 {
             color: #e74c3c;
         }
+        .calculator p {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 30px;
+        };
 
         .form-group {
             margin-bottom: 25px;
